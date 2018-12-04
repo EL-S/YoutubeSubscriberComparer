@@ -4,14 +4,29 @@ import time
 first =  True
 days_left_array = []
 
+pewdiepie_subs = None
+tseries_subs = None
+
 time1 = time.time()
 while True:
     try:
         pewdiepie_url = "https://bastet.socialblade.com/youtube/lookup?query=UC-lHJZR3Gqxm24_Vd_AJ5Yw"
         tseries_url = "https://bastet.socialblade.com/youtube/lookup?query=UCq-Fj5jknLsUf-MWSy4_brA"
-
+        
+        pewdiepie_subs_old = pewdiepie_subs
+        tseries_subs_old = tseries_subs
+        
         pewdiepie_subs = int(requests.get(pewdiepie_url).text)
         tseries_subs = int(requests.get(tseries_url).text)
+
+        if pewdiepie_subs_old != None:
+            pewdiepie_gains = pewdiepie_subs - pewdiepie_subs_old
+        else:
+            pewdiepie_gains = 0
+        if tseries_subs_old != None:
+            tseries_gains = tseries_subs - tseries_subs_old
+        else:
+            tseries_gains = 0
         if not first:
             old_difference = difference
         else:
@@ -36,6 +51,10 @@ while True:
             avg_value = 999999999999
             
         print("Subs Per Second:",subs_per_second)
+        print("Pewdiepie Subs:",pewdiepie_subs)
+        print("T-Series Subs:",tseries_subs)
+        print("Pewdiepie Gains:",pewdiepie_gains)
+        print("T-Series Gains:",tseries_gains)
         print("Difference:",difference)
         print("Change:",change)
         print("Days Left:",days_left)
