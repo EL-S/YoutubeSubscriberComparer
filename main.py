@@ -1,37 +1,66 @@
 import requests
 import time
+from bs4 import BeautifulSoup
 
 first =  True
 days_left_array = []
 
-pewdiepie_subs = None
-tseries_subs = None
+first_channel_subs = None
+second_channel_subs = None
+
+#search
+
+first_channel_name = "pewdiepie"
+second_channel_name = "t-series"
+
+search_url1 = "https://www.youtube.com/results?sp=EgIQAg%253D%253D&search_query="+first_channel_name
+search_url2 = "https://www.youtube.com/results?sp=EgIQAg%253D%253D&search_query="+second_channel_name
+soup1 = BeautifulSoup(requests.get(search_url1,headers={"User-Agent":"Mozilla/5.0"}).text, "lxml").find("button", attrs={"class":"yt-uix-button yt-uix-button-size-default yt-uix-button-subscribe-unbranded yt-uix-button-has-icon no-icon-markup yt-uix-subscription-button yt-can-buffer yt-uix-servicelink vve-check"})
+
+first_channel_userid = soup1.get("data-channel-external-id")
+
+soup2 = BeautifulSoup(requests.get(search_url2,headers={"User-Agent":"Mozilla/5.0"}).text, "lxml").find("button", attrs={"class":"yt-uix-button yt-uix-button-size-default yt-uix-button-subscribe-unbranded yt-uix-button-has-icon no-icon-markup yt-uix-subscription-button yt-can-buffer yt-uix-servicelink vve-check"})
+second_channel_userid = soup2.get("data-channel-external-id")
+#second_channel_name =
+
+#or
+#direct channel url
+##
+##first_channel_youtube = "https://www.youtube.com/user/first_channel"
+##soup = BeautifulSoup(requests.get(first_channel_youtube).text, "lxml")
+##second_channel_youtube = "https://www.youtube.com/user/second_channel" 
+##soup2 = BeautifulSoup(requests.get(second_channel_youtube).text, "lxml")
+##
+##first_channel_userid = soup.find("link", attrs={"rel":"canonical"}).get("href").split("/")[-1]
+##second_channel_userid = soup2.find("link", attrs={"rel":"canonical"}).get("href").split("/")[-1]
+
+#print(first_channel_userid,second_channel_userid)
 
 time1 = time.time()
 while True:
     try:
-        pewdiepie_url = "https://bastet.socialblade.com/youtube/lookup?query=UC-lHJZR3Gqxm24_Vd_AJ5Yw"
-        tseries_url = "https://bastet.socialblade.com/youtube/lookup?query=UCq-Fj5jknLsUf-MWSy4_brA"
+        first_channel_url = "https://bastet.socialblade.com/youtube/lookup?query="+first_channel_userid#UC-lHJZR3Gqxm24_Vd_AJ5Yw"
+        second_channel_url = "https://bastet.socialblade.com/youtube/lookup?query="+second_channel_userid#UCq-Fj5jknLsUf-MWSy4_brA"
         
-        pewdiepie_subs_old = pewdiepie_subs
-        tseries_subs_old = tseries_subs
+        first_channel_subs_old = first_channel_subs
+        second_channel_subs_old = second_channel_subs
         
-        pewdiepie_subs = int(requests.get(pewdiepie_url).text)
-        tseries_subs = int(requests.get(tseries_url).text)
+        first_channel_subs = int(requests.get(first_channel_url).text)
+        second_channel_subs = int(requests.get(second_channel_url).text)
 
-        if pewdiepie_subs_old != None:
-            pewdiepie_gains = pewdiepie_subs - pewdiepie_subs_old
+        if first_channel_subs_old != None:
+            first_channel_gains = first_channel_subs - first_channel_subs_old
         else:
-            pewdiepie_gains = 0
-        if tseries_subs_old != None:
-            tseries_gains = tseries_subs - tseries_subs_old
+            first_channel_gains = 0
+        if second_channel_subs_old != None:
+            second_channel_gains = second_channel_subs - second_channel_subs_old
         else:
-            tseries_gains = 0
+            second_channel_gains = 0
         if not first:
             old_difference = difference
         else:
-            old_difference = abs(pewdiepie_subs-tseries_subs)
-        difference = abs(pewdiepie_subs-tseries_subs)
+            old_difference = abs(first_channel_subs-second_channel_subs)
+        difference = abs(first_channel_subs-second_channel_subs)
         change = old_difference-difference
         time2 = time.time()
         time_delta = time2-time1
@@ -51,10 +80,10 @@ while True:
             avg_value = 999999999999
             
         print("Subs Per Second:",subs_per_second)
-        print("Pewdiepie Subs:",pewdiepie_subs)
-        print("T-Series Subs:",tseries_subs)
-        print("Pewdiepie Gains:",pewdiepie_gains)
-        print("T-Series Gains:",tseries_gains)
+        print(first_channel_name.title(),"Subs:",first_channel_subs)
+        print(second_channel_name.title(),"Subs:",second_channel_subs)
+        print(first_channel_name.title(),"Gains:",first_channel_gains)
+        print(second_channel_name.title(),"Gains:",second_channel_gains)
         print("Difference:",difference)
         print("Change:",change)
         print("Days Left:",days_left)
@@ -62,7 +91,7 @@ while True:
         print("-----------------------------")
         first = False
         time1 = time.time()
-        time.sleep(600)
+        time.sleep(1)
     except:
         pass
 
