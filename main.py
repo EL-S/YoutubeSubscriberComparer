@@ -4,6 +4,7 @@ from bs4 import BeautifulSoup
 
 first =  True
 days_left_array = []
+flag = False
 
 first_channel_subs = None
 second_channel_subs = None
@@ -11,17 +12,19 @@ second_channel_subs = None
 #search
 
 first_channel_name = "pewdiepie"
-second_channel_name = "t-series"
+second_channel_name = "tseries"
 
 search_url1 = "https://www.youtube.com/results?sp=EgIQAg%253D%253D&search_query="+first_channel_name
 search_url2 = "https://www.youtube.com/results?sp=EgIQAg%253D%253D&search_query="+second_channel_name
+first_channel_name = BeautifulSoup(requests.get(search_url1,headers={"User-Agent":"Mozilla/5.0"}).text, "lxml").find("a", attrs={"class":"yt-uix-tile-link yt-ui-ellipsis yt-ui-ellipsis-2 yt-uix-sessionlink spf-link "}).get("title")
+second_channel_name = BeautifulSoup(requests.get(search_url2,headers={"User-Agent":"Mozilla/5.0"}).text, "lxml").find("a", attrs={"class":"yt-uix-tile-link yt-ui-ellipsis yt-ui-ellipsis-2 yt-uix-sessionlink spf-link "}).get("title")
 soup1 = BeautifulSoup(requests.get(search_url1,headers={"User-Agent":"Mozilla/5.0"}).text, "lxml").find("button", attrs={"class":"yt-uix-button yt-uix-button-size-default yt-uix-button-subscribe-unbranded yt-uix-button-has-icon no-icon-markup yt-uix-subscription-button yt-can-buffer yt-uix-servicelink vve-check"})
 
 first_channel_userid = soup1.get("data-channel-external-id")
 
 soup2 = BeautifulSoup(requests.get(search_url2,headers={"User-Agent":"Mozilla/5.0"}).text, "lxml").find("button", attrs={"class":"yt-uix-button yt-uix-button-size-default yt-uix-button-subscribe-unbranded yt-uix-button-has-icon no-icon-markup yt-uix-subscription-button yt-can-buffer yt-uix-servicelink vve-check"})
 second_channel_userid = soup2.get("data-channel-external-id")
-#second_channel_name =
+
 
 #or
 #direct channel url
@@ -34,7 +37,7 @@ second_channel_userid = soup2.get("data-channel-external-id")
 ##first_channel_userid = soup.find("link", attrs={"rel":"canonical"}).get("href").split("/")[-1]
 ##second_channel_userid = soup2.find("link", attrs={"rel":"canonical"}).get("href").split("/")[-1]
 
-#print(first_channel_userid,second_channel_userid)
+print(first_channel_name+":",first_channel_userid,"\n"+second_channel_name+":",second_channel_userid)
 
 time1 = time.time()
 while True:
@@ -86,13 +89,18 @@ while True:
         print(second_channel_name.title(),"Gains:",second_channel_gains)
         print("Difference:",difference)
         print("Change:",change)
+        print("Time Since Last Update (seconds):",round(time_delta,2))
         print("Days Left:",days_left)
         print("Days Left (Avg):",avg_value)
         print("-----------------------------")
         first = False
         time1 = time.time()
-        time.sleep(1)
-    except:
-        pass
+        #time.sleep(1)
+    except ValueError:
+        if flag == False: #only alert you the first time
+            print("SocialBlade returned an empty page! (restart the program maybe)")
+            flag = True
+    except Exception as e: #print the fatal error
+        print(e)
 
 
